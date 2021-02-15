@@ -19,13 +19,24 @@ parser.add_argument('-o', '--output-directory',
                     required = True)
 
 parser.add_argument('-f', '--force',
-                    dest = 'force')
+                    dest = 'force',
+                    action = 'store_true',
+                    default = False)
+
+parser.add_argument('-v', '--verbose',
+                    dest = 'verbose',
+                    action = 'store_true',
+                    default = False)
 
 args = parser.parse_args()
 
 regex = re.compile("\w+_\w+_\w+.pdb(.gz)*")
 if not regex.match(args.input):
-    raise IOError("Input file must have the format <..........>")
+    raise ValueError("Input file must be of the format <name>_<chain1>_<chain2>.pdb(.gz)")
 
-os.makedirs("./%s/structures" % args.output_directory, exist_ok = True)
-os.makedirs("./%s/analysis" % args.output_directory, exist_ok = True)
+if not os.path.isdir(args.output_directory) or args.force:
+    os.makedirs("./%s/structures" % args.output_directory, exist_ok = True)
+    os.makedirs("./%s/analysis" % args.output_directory, exist_ok = True)
+
+else:
+    raise OSError("%s already exists, specify a different output directory or enable option -f to override the already existing." % args.output_directory)
