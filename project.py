@@ -1,6 +1,8 @@
 import argparse
 import re
 import os
+import logging
+import sys
 
 parser = argparse.ArgumentParser(description='Make protein origami and stuff.')
 
@@ -10,8 +12,7 @@ parser.add_argument('-i', '--input',
                     required = True)
 
 parser.add_argument('-s', '--stechiometry',
-                    type = str,
-                    required = False)
+                    type = str)
 
 parser.add_argument('-o', '--output-directory',
                     dest = 'output_directory',
@@ -30,6 +31,12 @@ parser.add_argument('-v', '--verbose',
 
 args = parser.parse_args()
 
+if args.verbose:
+    logging.basicConfig(stream=sys.stderr,
+                        level=logging.DEBUG,
+                        format = '%(asctime)s %(message)s',
+                        datefmt='%m/%d/%Y %H:%M:%S')
+
 regex = re.compile("\w+_\w+_\w+.pdb(.gz)*")
 if not regex.match(args.input):
     raise ValueError("Input file must be of the format <name>_<chain1>_<chain2>.pdb(.gz)")
@@ -40,3 +47,5 @@ if not os.path.isdir(args.output_directory) or args.force:
 
 else:
     raise OSError("%s already exists, specify a different output directory or enable option -f to override the already existing." % args.output_directory)
+
+logging.info('doing something')
