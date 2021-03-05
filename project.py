@@ -49,3 +49,22 @@ else:
     raise OSError("%s already exists, specify a different output directory or enable option -f to override the already existing." % args.output_directory)
 
 logging.info('doing something')
+
+
+#Procesado del Input
+
+    #Comprobar formato pdb
+    #Comprobar todos los pares de interacciones (si sobra tiempo hacerlas de novo)
+    #Qué tipos de moléculas hay
+
+#Superimposición
+
+    #Coger un dímero
+    #Superimponer otro dímero
+    #...
+
+#Modeller (alternativa puede que más fácil)
+
+#Evaluación del macrocomplejo
+
+#GUI
