@@ -12,3 +12,4 @@ a rotation matrix that is used to copy and move the other chain (the one with un
 6. Detecting clashes: each time a new chain is added to the complex, the model NeighbourSearch is used to detect atoms located at closer distance than a specific threshold (define threshold based on bibliography).
 7. Producing several complexes from same input structures
 8. Refine the model
+9. GUI
