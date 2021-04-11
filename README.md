@@ -14,6 +14,35 @@ a rotation matrix that is used to copy and move the other chain (the one with un
 8. Refine the model
 9. GUI
 
+## Command line arguments
+```
+usage: project2.py [-h] [-i INPUT [INPUT ...]] [-s STOICHIOMETRY] -o
+                   OUTPUT_DIRECTORY [-f] [-v] [-d DIRECTORY]
+
+Make protein complexes from protein-protein and protein-DNA interactions.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -i INPUT [INPUT ...], --input INPUT [INPUT ...]
+                        Input files in PDB format. Use this option to use
+                        individual files as input. To work with an entire
+                        directory use the option -d.
+  -s STOICHIOMETRY, --stoichiometry STOICHIOMETRY
+                        Specifies the stoichiometry of the complex. Each chain
+                        must be separated by newlines. Each line must contain
+                        the number of the chainfollowed by a colon (:) or an
+                        equal sign (=) and the number of copies of that chain
+                        in the final complex.
+  -o OUTPUT_DIRECTORY, --output-directory OUTPUT_DIRECTORY
+                        Specifies the output directory.
+  -f, --force           Force the overwrite of the output directory if it
+                        already exists.
+  -v, --verbose         Enables detailed information about the program run.
+  -d DIRECTORY, --directory DIRECTORY
+                        Specifies the directory where all the input files are
+                        to be taken. To work with individual files use the
+                        option -i.
+```
 
 ## Model scoring
 By making use of ProSa2003, the program allows the user to compute the z-scores of the generated models. These scores are calculated by summing the energies (both surface, paired and combined) for all the residues of a model and comparing it to the energies of several models with different folds.
