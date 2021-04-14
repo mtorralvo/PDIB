@@ -25,32 +25,22 @@ python setup.py install
 ## Command line arguments
 
 ```
-usage: project2.py [-h] [-i INPUT [INPUT ...]] [-s STOICHIOMETRY] -o
-                   OUTPUT_DIRECTORY [-f] [-v] [-d DIRECTORY]
+usage: project2.py [-h] [-i INPUT_DIRECTORY] [-s STOICHIOMETRY] -o
+                              OUTPUT_DIRECTORY [-f] [-v]
 
 Make protein complexes from protein-protein and protein-DNA interactions.
 
 optional arguments:
   -h, --help            show this help message and exit
-  -i INPUT [INPUT ...], --input INPUT [INPUT ...]
-                        Input files in PDB format. Use this option to use
-                        individual files as input. To work with an entire
-                        directory use the option -d.
+  -i INPUT_DIRECTORY, --input-directory INPUT_DIRECTORY
+                        Input directory containing PDB files
   -s STOICHIOMETRY, --stoichiometry STOICHIOMETRY
-                        Specifies the stoichiometry of the complex. Each chain
-                        must be separated by newlines. Each line must contain
-                        the number of the chainfollowed by a colon (:) or an
-                        equal sign (=) and the number of copies of that chain
-                        in the final complex.
+                        Path to the file containing the desired stoichiometry
   -o OUTPUT_DIRECTORY, --output-directory OUTPUT_DIRECTORY
-                        Specifies the output directory.
-  -f, --force           Force the overwrite of the output directory if it
-                        already exists.
-  -v, --verbose         Enables detailed information about the program run.
-  -d DIRECTORY, --directory DIRECTORY
-                        Specifies the directory where all the input files are
-                        to be taken. To work with individual files use the
-                        option -i.
+                        Output directory to store the models
+  -f, --force           Forces the overwrite of the output directory if it
+                        already exists
+  -v, --verbose         enables detailed information about the program run
 ```
 
 ## Usage example
@@ -70,7 +60,7 @@ Protein-DNA Interaction Builder (PDIB) is a python program that aims to generate
 
 As an input, it takes PDB files containing pairs of interacting chains that will form the final structure, in order to know the relative position of each of the subunits. By making use of a recursive approach, PDIB explores different ways of arranging the specified chains, yielding several models that preserve the interactions between pairs of chains as specified in the interaction files.
 
-The program also """""allows""""" the user to use an stechiometry file, specifying the number of times that each chain should appear in the final complex, and the program will try to find solutions that meet the user requirements.
+The program also """""allows""""" the user to use an stoichiometry file, specifying the number of times that each chain should appear in the final complex, and the program will try to find solutions that meet the user requirements.
 
 In order to yield better and more reliable results, the program can use PyRosetta to perform a relax pipeline that optimizes the energy of the models. In addition, ProSa2003 can be runned from PDIB to retrieve the z-scores of the generated model, so the user can identify those with a better energy profile.
 
@@ -79,7 +69,7 @@ The program can be run from the command line or using a graphical user interface
 
 ## Input files
 
-PDIB will look for all the files having a .pdb extension in the directory specified by -d. The filenames must match the following pattern:
+PDIB will look for all the files having a .pdb extension in the directory specified by -i. The filenames must match the following pattern:
 <Name>_<Chain1>_<Chain2>.pdb(.gz)
 
 Where name is the name of the structure and Chain1 and Chain2 are the interacting subunits present in the file.
@@ -94,7 +84,7 @@ Where the number at the right indicates the number of appearances of that chain.
 
 ### Input preprocessing
 
-First, the program looks for all the PDB files contained in the specified directory, keeping only those that match the pattern previously mentioned (<Name>_<Chain1>_<Chain2>.pdb(.gz)). Chains are randomly assigned a new unique name in order to avoid conflicts during the runtime. Then, a dictionary is generated containing each chain as a key and a list of its possible interactions as a value. """In case""" the user provides a stoichiometry file, it is converted to a dictionary as well.
+First of all, the program looks for all the PDB files contained in the specified directory, keeping only those that match the pattern previously mentioned (<Name>_<Chain1>_<Chain2>.pdb(.gz)). Unique chains are randomly assigned a new unique name in order to avoid conflicts during the runtime. Then, a dictionary is generated containing each chain as a key and a list of its possible interactions as a value. """In case""" the user provides a stoichiometry file, it is converted to a dictionary as well.
 
 ## Main algorithm
 
