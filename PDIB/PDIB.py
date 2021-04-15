@@ -12,9 +12,11 @@ import glob
 import random
 import string
 import numpy as np
+import warnings
+from Bio.PDB.PDBExceptions import PDBConstructionWarning
+warnings.simplefilter('ignore', PDBConstructionWarning)
 
 parser = argparse.ArgumentParser(description='Make protein origami and stuff.')
-
 
 parser.add_argument( '-i', '--input-directory',
     dest = 'input_directory',
@@ -89,6 +91,16 @@ if args.verbose:
         level=logging.DEBUG,
         format = '%(asctime)s %(message)s',
         datefmt='%m/%d/%Y %H:%M:%S')
+
+if not args.stoich or args.num_chains:
+    warning = input('No stoichiometry file nor number of chains specified. The program will keep running until 1000 chains are added. Do you want to continue (y/n): ')
+    
+    if warning in ['y', 'Y', 'yes', 'Yes']:
+        pass
+    
+    else:
+        logging.warning('Exiting the program.')
+        quit()
 
 input_dir = args.input_directory # Read input directory
 
@@ -243,10 +255,10 @@ if args.refine:
         os.makedirs('./%s/refined' % args.output_directory, exist_ok = True)
         
         for path in model_paths:
-            refine(path, args.output_directory, logging)
+            refine(path, args.output_directory)
             model_paths.append(path)
 
 # Compute z-scores with ProSa2003
 if args.energies:
-    compute_energy(model_paths, args.output_directory, logging)
+    compute_energy(model_paths, args.output_directory)
 
