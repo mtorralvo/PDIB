@@ -113,7 +113,7 @@ We have developed a GUI to run PDIB without having to use the command line. It h
 
 In the required inputs frame, the input and the output folders can be browsed from the computer. Here, it is important that the output folder already contains inside two directories named as follows: structures and analysis. Moreover, it has a list box where the PDB files found in the input directory are displayed. The next image shows how the files from the 1gzx folder are represented in the GUI. 
 
-![](https://https://github.com/angelmf97/PYT-project/blob/main/images/GUI_options.png)
+\includegraphics[width=7cm]{images/GUI_options.png}
 
 Then, the user can choose to either specify the number of models that wants PDIB to generate or select the option of generating all possible models. 
 
