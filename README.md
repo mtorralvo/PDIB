@@ -95,7 +95,7 @@ Optionally, the user may provide an stoichiometry file, indicating the number of
 Chain1: 1
 Chain2: 1
 ```
-Where the number at the right indicates the number of appearances of that chain. The colons (":") can be replaced with an equal sign ("=") if the user pleases. The names appearing in the stoichiometry file must match those indicated in the .pdb filenames.
+Where the number at the right indicates the number of appearances of that chain. The colons (":") can be replaced with an equal sign ("=") if the user pleases. The chain id in the stoichiometry should be concordant with those in the pairwise interaction pdb files.
 
 ## Generating several models
 
