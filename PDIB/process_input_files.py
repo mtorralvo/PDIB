@@ -34,6 +34,7 @@ def process_input (list_files):
     parser = PDBParser(PERMISSIVE=1)
     ppb = PPBuilder()
     check_user = 0
+    dir_created = 0
 
     # Loop through files found in the list of files
     for filename in list_files:
@@ -45,15 +46,20 @@ def process_input (list_files):
         if n_chains != 2:
             if check_user == 0:
                 user_allows = input('It seems that some files contain more than two chains. These may be caused by DNA or RNA sequences being represented as two chains.'
-                    'PDIB will try and treat both chains as one, generating files in the process that will be later removed.'
+                    'PDIB will try and treat both chains as one, generating files in the process that will be later removed. '
                     'Do you want to continue? (y/n): ')
                 check_user = 1
             
             if user_allows == 'y':
+
+                if dir_created == 0:
+                    os.makedirs('PDIB_tmp', exist_ok=True)
+                    dir_created = 1
+                
                 dna_res = [' DA', ' DT', ' DC', ' DG']
-                os.makedirs('PDIB_tmp', exist_ok=True)
                 temp = NamedTemporaryFile(dir='PDIB_tmp', delete=False)
                 flag = 0
+                
                 for line in open(filename):
                     
                     if line[17:20] in dna_res:
