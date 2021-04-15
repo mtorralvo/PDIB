@@ -61,7 +61,7 @@ parser.add_argument('-n_models', '--number-of-models',
    type=int,
    action='store',
    default=1,
-   help='Number of models to be generated')
+   help='Number of models to be generated (default 1)')
 
 # Default 60 because 62 is the maximum number of chains that can be stored in a single pdb file (non multicharacter chain ids)
 parser.add_argument('-n_chains', '--number-of-chains',
