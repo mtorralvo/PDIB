@@ -120,7 +120,7 @@ if os.path.isdir(input_dir):
 elif os.path.isfile(input_dir):
     raise ValueError('Input must be a directory')
 
-logging.info('%d input files found.' %len(list_files))
+logging.info('%d input files found.\n' %len(list_files))
 
 # Generate the output folders in case they do not exist and the force option is activated
 if not os.path.isdir(args.output_directory) or args.force:
@@ -216,7 +216,7 @@ for final_model in final_models:
     # Model name: model_n.pdb where n is increased for each model
     written_id = 0
     PDB_name = 'model_' + str(written_id) + '.pdb'
-    while PDB_name in os.listdir(args.output_directory + '/structure') :
+    while PDB_name in os.listdir(args.output_directory) :
         written_id += 1
         PDB_name = 'model_'+str(written_id)+'.pdb'
 
