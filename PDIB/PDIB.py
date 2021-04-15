@@ -216,7 +216,7 @@ for final_model in final_models:
     # Model name: model_n.pdb where n is increased for each model
     written_id = 0
     PDB_name = 'model_' + str(written_id) + '.pdb'
-    while PDB_name in os.listdir(args.output_directory + '/structure') :
+    while PDB_name in os.listdir(args.output_directory + '/structures') :
         written_id += 1
         PDB_name = 'model_'+str(written_id)+'.pdb'
 
