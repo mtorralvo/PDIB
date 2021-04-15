@@ -66,7 +66,7 @@ parser.add_argument('-n_chains', '--number-of-chains',
    dest='num_chains',
    type=int,
    action='store',
-   default=1000,
+   default=60,
    help='Expected number of chains')
 
 parser.add_argument('-e', '--energies',
