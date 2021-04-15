@@ -67,7 +67,7 @@ An example is provided with the program and can be run by using the following co
 ```
 pdib.py -i examples/1gzx/ -o . -f -v > log.txt
 ```
-This will create two folders inside the current directory: "Structures" and "Analysis". The first one contains all the structures that PDIB could find meeting the requirements of the user. The latter contains (if the option is selected) a file with the Z-Score of the generated models, so the user can choose the one with the best score.
+This will create two folders inside the current directory (determining output directory is mandatory): "Structures" and "Analysis". The first one contains all the structures that PDIB could find meeting the requirements of the user. The latter contains (if the option is selected) a file with the Z-Score of the generated models, so the user can choose the one with the best score.
 
 As the verbose (-v) option is enabled, the program will print information about the process to the standard output, that is redirected to a new file named "log.txt" in this example. With the -f option, the files stored in the output directory specified are going to be overwritten. 
 
