@@ -109,11 +109,24 @@ Finally, PDIB allows to generate all the possible models with the option -exh. T
 
 We have developed a GUI to run PDIB without having to use the command line. It has different button blocks to select inputs that are mandatory for the program to run properly and another one to select the optional ones. 
 
-![Image 1](https://https://github.com/angelmf97/PYT-project/blob/main/images/GUI_default.png)
+<div class="row">
+    <div class="col-md-12">
+      <div class="thumbnail">
+        <img src="/images/GUI_default.png" alt="GUI" style="width:500px;height:400px">
+      </div>
+    </div>
+  </div>
+
 
 In the required inputs frame, the input and the output folders can be browsed from the computer. Here, it is important that the output folder already contains inside two directories named as follows: structures and analysis. Moreover, it has a list box where the PDB files found in the input directory are displayed. The next image shows how the files from the 1gzx folder are represented in the GUI. 
 
-![Image 2](https://https://github.com/angelmf97/PYT-project/blob/main/images/GUI_options.png)
+<div class="row">
+    <div class="col-md-12">
+      <div class="thumbnail">
+        <img src="/images/GUI_options.png" alt="GUI" style="width:500px;height:400px">
+      </div>
+    </div>
+  </div>
 
 Then, the user can choose to either specify the number of models that wants PDIB to generate or select the option of generating all possible models. 
 
