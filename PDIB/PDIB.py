@@ -21,6 +21,7 @@ parser = argparse.ArgumentParser(description='Make protein origami and stuff.')
 parser.add_argument( '-i', '--input-directory',
     dest = 'input_directory',
     action = 'store',
+    required = True,                    
     default = './',
     help = 'Input directory containing PDB files')
 
