@@ -114,7 +114,7 @@ if os.path.isdir(input_dir):
     if len(os.listdir(input_dir)) == 0:
         raise ValueError('Input folder is empty')
 
-    elif len(list_files) == 0:
+    elif len(list_files) < 2:
         raise ValueError('No files found in the specified directory. Make sure they are stored as [filename].pdb')
 
 elif os.path.isfile(input_dir):
@@ -216,7 +216,7 @@ for final_model in final_models:
     # Model name: model_n.pdb where n is increased for each model
     written_id = 0
     PDB_name = 'model_' + str(written_id) + '.pdb'
-    while PDB_name in os.listdir(args.output_directory + '/structures') :
+    while PDB_name in os.listdir(args.output_directory + '/structures/') :
         written_id += 1
         PDB_name = 'model_'+str(written_id)+'.pdb'
 
