@@ -29,7 +29,7 @@ python setup.py install
 ## Command line arguments
 
 ```
-usage: pdib.py [-h] [-i INPUT_DIRECTORY] [-s STOICHIOMETRY] -o
+usage: PDIB.py [-h] [-i INPUT_DIRECTORY] [-s STOICHIOMETRY] -o
                               OUTPUT_DIRECTORY [-f] [-v]
 
 Make protein complexes from protein-protein and protein-DNA interactions.
@@ -66,7 +66,7 @@ Gives information during the execution of the script
 
 An example is provided with the program and can be run by using the following command:
 ```
-pdib.py -i examples/1gzx/ -o . -f -v
+PDIB.py -i examples/1gzx/ -o . -f -v
 ```
 This will create two folders inside the current directory (determining output directory is mandatory): "Structures" and "Analysis". The first one contains all the structures that PDIB could find meeting the requirements of the user. The latter contains (if the option is selected) a file with the Z-Score of the generated models, so the user can choose the one with the best score.
 
