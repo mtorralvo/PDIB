@@ -5,8 +5,9 @@ from pyrosetta.io import pose_from_pdb
 from pyrosetta.rosetta.core.scoring import get_score_function
 import pyrosetta
 import os
+import logging
 
-def refine(model_path, output_path, logging, relax_type = "f"):
+def refine(model_path, output_path, relax_type = "f"):
     """Refines the model using PyRosetta."""
 
     logging.info(f"Refining the model at {model_path}, this may take several time.")
@@ -42,7 +43,6 @@ if __name__ == '__main__':
     
     import sys
     from sys import argv
-    import logging
     
     logging.basicConfig(
         stream=sys.stderr,

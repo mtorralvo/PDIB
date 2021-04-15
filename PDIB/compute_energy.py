@@ -1,8 +1,9 @@
 import os
 import tempfile
 import subprocess
+import logging
 
-def compute_energy(model_paths, output_path, logging):
+def compute_energy(model_paths, output_path):
     """Compute the combined energies and z-scores of the generated models in order to compare them"""
 
     # Create the commands to analyse energies and produce z-scores in a temporary file
@@ -36,7 +37,6 @@ def compute_energy(model_paths, output_path, logging):
     
         import sys
         from sys import argv
-        import logging
         
         logging.basicConfig(
             stream=sys.stderr,
