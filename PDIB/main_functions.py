@@ -11,33 +11,34 @@ from Bio.PDB import Model as pdb_model
 from Bio.PDB import PDBIO
 import random
 from process_input_files import id_generator
+import logging
 
 ppb = PPBuilder()
 parser = PDBParser(PERMISSIVE = True, QUIET = True)
 
 def superimpose(chainA, chainB, moving = None):
 
-    """Superimpose one chain of a structure with an equivalent chain  chains and add another with the rotation parameters obtained. Return structure object with added chain, information about clashes and a flag for having added something.
-    Keyword arguments:
-    eq_chain1 -- common chain in the current structure (curr_struct)
-    eq_chain2 -- common chain in the structure from which a chain wants to be added (moving_chain)
-    moving_chain -- chain that may be added to the current complex
-    rec_level_complex -- recursion level of building the complex
-    filename2 -- name of the file that contains the moving_chain """
+    """
+    Superimposes two homolog chains applying the rotation matrix to the newly added chain, returning the rotated copy. It also returns the RMSD of the superimposition.
+    chainA: chain of the previous structure (Chain object from PDB.Chain).
+    chainB: homolog chain (Chain object from PDB.Chain) of the pairwise interaction to be added.
+    moving: non-homolog chain (Chain object from PDB.Chain) that will be transformed using the rotation matrix.
+    """
 
     residuesA = list(chainA.get_residues())
     residuesB = list(chainA.get_residues())
 
-    # filter non-standard residues or errors
+    # Only keep alpha carbons (or P in the case of nucleic acids).
     filteredA = [res for res in residuesA if ('CA' in res or 'P' in res)]
     filteredB = [res for res in residuesB if ('CA' in res or 'P' in res)]
 
-    # superimposer will try to pair atoms to move them from the position in one chain to the other, so it is important to have the same number of atoms
+    # Both chains must have the same length in order to be superimposed.
     if len(filteredA) > len(filteredB):
         filteredA = filteredA[:len(filteredB)]
     elif len(filteredA) < len(filteredB):
         filteredB = filteredB[:len(filteredA)]
 
+    # Get alpha carbons in chainA
     atomsA = []
     for res in filteredA:
         for atom in res.get_atoms():
@@ -45,6 +46,7 @@ def superimpose(chainA, chainB, moving = None):
                 atomsA.append(atom)
                 break
 
+    # Get alpha carbons in chainB
     atomsB = []
     for res in filteredB:
         for atom in res.get_atoms():
@@ -52,114 +54,110 @@ def superimpose(chainA, chainB, moving = None):
                 atomsB.append(atom)
                 break
 
-    
-    superimposer = Superimposer()
+    superimposer = Superimposer()           # Superimposer object
 
-    superimposer.set_atoms(atomsA, atomsB)
+    superimposer.set_atoms(atomsA, atomsB)  # Superimposes both chains
 
-    rmsd = superimposer.rms
+    rmsd = superimposer.rms                 # RMSD
 
+    # If a moving chain is specified, apply the rotation matrix to it.
     if moving:
         superimposer.apply(list(moving.get_atoms()))
         return rmsd, moving
 
-    return rmsd    
+    return rmsd  # Else, return the RMSD  
 
 
 def check_clash(model, chain_to_add, clash_distance=2.5):
 
-    """Check if there is a steric clash between a rotating chain and current structure. Return False (no clash), 1 (clash between two different chains) or 2 (same chain). Also returns the ids of the chains in structure that are clashing
-    Keyword arguments:
-    structure -- whole structure
-    rotating_chain -- chain to be analyzed with respect to structure
-    distance_for_clash -- threshold to consider clash between atoms. Default = 2.5 (Armstrongs)
-    Clash criteria: at least 20 of the atoms are at a lower distance than distance_for_clash
-    Same chain criteria: RMSD between them <= 3.0 """
+    """
+    Checks wether a newly added chain has clashes with the rest of the structure. Returns a set containing the clashing chains and a boolean indicating whether the newly added chain is clashing with itself or not.
+    model: previous structure.
+    chain_to_add: new chain (Chain object from PDB.Chain).
+    clash_distance: indicates a distance threshold (in Angstroms) to consider two atoms as clashing.
+    """
 
-    # initialize the neighbor search
+    # Initialization of NeighbourSearch, that allows to find clashes
     neighbor_object = NeighborSearch(list(model.get_atoms()))
 
-    structure_clashing_chains = set() # It is important that it is a set because no duplicates
+    structure_clashing_chains = set()
     total_clashes = 0
 
+    # For each atom, clashes are compute
     for atom in chain_to_add.get_atoms():
         clashes = neighbor_object.search(atom.get_coord(), clash_distance)
-        if len(clashes) > 0:
+        
+        if len(clashes) > 0:    # If clashes are found...
+
+            # Increase the total number of clashes and add the conflicting chains to the set
             for clash in clashes:
                 structure_clashing_chains.add(clash.get_parent().get_parent().id)
-                total_clashes += 1 # Number of atoms that clash
+                total_clashes += 1
     
+    # In case the new chain is conflicting with several chains
     if len(structure_clashing_chains) > 1 and total_clashes > 20:
-        # a clash against different chains:
         return structure_clashing_chains, False
     
+
     elif len(structure_clashing_chains) == 1 and total_clashes > 20 and chain_to_add.id[1] == list(structure_clashing_chains)[0][1]:
 
-        # a clash MAYBE because you are trying to superimpose something in the place it was already
+        clash_chain = model[0][list(structure_clashing_chains)[0]]  # Conflictive chain
+        RMSD = superimpose(clash_chain, chain_to_add)               # Compute RMSD
 
-        # define the clashing chain:
-        clash_chain = model[0][list(structure_clashing_chains)[0]]
-        RMSD = superimpose(clash_chain, chain_to_add)
-
+        # If the RMSD is lower than 3.0, the chain is clashing with itself.
         if RMSD <= 3.0:
-            # it is the same chain
             return structure_clashing_chains, True
 
+        # Else the chain is clashing with another chain of the structure
         else:
-            # it is another chain or the same with different structure
             return structure_clashing_chains, False
 
     elif total_clashes > 20:
-        # it is ine chain and the previous conditions are not fullfilled
         return structure_clashing_chains, False
 
+    # No clashes found
     else:
-        # no clash
         return None, False
 
 def check_structure_exists(structure, all_structures):
 
-    """Ask if structure is already in created_structures (a list of structures). Returns a boolean.
-    Considerations:
-    Return True if all of the chains in structure are in one of the structures in created_structures and RMSD <= 3.0, meaning they are the same structure """
+    """Returns a boolean indicating wether the input structure is in the set of all structures. Returns True if all the chains of the structure matches with all the chains of any structure present in all_structures."""
 
-    # make a deepcopy of these objects
-    structure = structure.copy()
+    structure = structure.copy()    # Copy the structure in order to preserve the original
     all_structures = all_structures.copy()
 
-    # Get the ids of the chains in structure
+    # Generate a list containing all the chain IDs of the input structure
     chain_ids_structure = tuple(sorted([x.id[1] for x in structure.get_chains()]))
 
-    # loop through each of the contents of created_structures:
     for each_structure in all_structures:
 
-        # get the chains of created_structure
+        # Chain IDs of another structure
         chain_ids_each_structure = tuple(sorted([x.id[1] for x in each_structure.get_chains()]))
 
-        # ask if the number of each and ids of the chains are the same:
+        # Checks wether both structures have the same chain IDs
         if chain_ids_structure == chain_ids_each_structure:
 
-            # pick one chain in structure to compare with the chains in created
+            # Selects a chain of the input structure
             chain_str = list(structure.get_chains())[0]
             id_str = chain_str.id[1]
 
-            # try to find a partner in created_structure:
+            # Searches for chains with the same ID
             for chain_each_str in each_structure.get_chains():
 
                 id_each_str = chain_each_str.id[1]
 
-                # if they have the same id they are potential partners. Superimpose these next. The id_created_str has also to be avaliable in possible_partners
+                # If a chain with the same name is found, superimpose both chains
                 if id_str == id_each_str:
 
                     RMSD, structure = superimpose(chain_str, chain_each_str, moving=structure)
 
-                    # if I have superimposed same ID but different structure, try another chain
+                    # If the superimposition yields a low RMSD (<3A) they are the same chain
                     if  RMSD > 3.0:
                         continue
 
-                    # if the previous chain_str and chain_created_str are real partners they should also result in haveing all they cross-superimposed chains with partners
                     partners = set()
 
+                    # Creates a list of partners
                     for searching_partner in each_structure.get_chains():
                         partner_found = False
 
@@ -176,10 +174,11 @@ def check_structure_exists(structure, all_structures):
                                         partners.add(possible_partner)
                                         partner_found = True
 
+                        # If all chains have a partner returns True
                         if len(partners) == len(list(created_structure.get_chains())):
-                            return True  # all chains have a partner, which means that the structure is in the created_structures
+                            return True  
 
-    # if you didn't find any match return false:
+    # If not all chains match returns False
     return False    
 
 def create_model(current_structure, stored_structures, info_files, num_chains, num_models, exhaustive, tree_level = 0, climb = False, in_a_branch = False, non_brancheable_clashes=set(), tried_branch_structures=list(), stoich=None, verbose=False):
