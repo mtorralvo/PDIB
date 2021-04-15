@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # coding=utf-8
 
+"""Main program. Handles the user input and calls the main functions"""
 
 import argparse
 import re
@@ -80,7 +81,7 @@ parser.add_argument('-r', '--refine',
    action="store_true",
    help="Makes use of PyRosetta in order to improve the obtained models")
 
-args = parser.parse_args() # list of arguments
+args = parser.parse_args() # List of arguments
 
 if args.verbose:
     logging.basicConfig(
@@ -89,12 +90,10 @@ if args.verbose:
         format = '%(asctime)s %(message)s',
         datefmt='%m/%d/%Y %H:%M:%S')
 
-regex = re.compile(".*\w+_\w+_\w+.pdb(.gz)*")
 
+input_dir = args.input_directory # Read input directory
 
-input_dir = args.input_directory #read input directory
-
-# Check if input is a directory and if True, save files matching the regex in a list
+# Check if input is a directory and if True, save files in a list
 if os.path.isdir(input_dir):
     list_files = [ os.path.join(input_dir, f) for f in os.listdir(input_dir) if regex.match(f)]
 
@@ -118,8 +117,9 @@ if not os.path.isdir(args.output_directory) or args.force:
 else:
     raise OSError("%s already exists, specify a different output directory or enable option -f to override the already existing one." % args.output_directory)
 
-info_files, info_seqs = process_input(list_files)
+info_files, info_seqs = process_input(list_files)   # Generate dictionaries with info about the sequencues and the files they are in
 
+# Generate stoichiometry dictionary
 stoichiometry = None
 if args.stoich:
     stoichiometry = get_stoichiometry(args.stoich)  
@@ -129,10 +129,10 @@ parser = PDBParser(PERMISSIVE=1)
 first_file = random.choice(list(info_files.keys()))
 first_structure = parser.get_structure("structure", first_file)
 
-# change the chain id names
+# Change the chain id names
 for chain in first_structure.get_chains():
-    original_id = chain.id  # the so-called chain accession, usually a letter (A,B,C,D ...)
-    chain.id = [x for x in info_files[first_file] if x[0] == original_id][0]
+    original_id = chain.id  # Original ID
+    chain.id = [x for x in info_files[first_file] if x[0] == original_id][0]    # New ID
 
 final_models = []
 
@@ -140,9 +140,6 @@ final_models = create_model(first_structure, final_models, info_files, args.num_
 
 
 if len(final_models) == 0:
-    # if options.stoich:
-    #     sys.stderr.write("No complex could be obtained with your specified stoichiometry. We recommend specifying a number of models to explore (-n_models) or run the default pipeline (as sometimes the obtained stoichiometry is very similar to the expected). \n")
-    # else:
         sys.stderr.write("No complex could be obtained with the provided files. \n")
 
 chain_alphabet = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S",
@@ -151,89 +148,88 @@ chain_alphabet = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M
             , "5", "6", "7", "8", "9"]
 
 model_paths = []
+
+logging.info("Storing the final models.")
+
 for final_model in final_models:
 
-    # if final model has more than 62 chains, split into different models
+    # PDB format limits the number of possible chains that can be added to a file, as the chain ID is assigned
+    # only one position. In order to solve that, the program assigns a character from chain_alphabet to each chain
+    # in the model. If the model has more than 62 chains (the length of the alphabet), t is splitted in several files.
     structure = pdb_struct.Structure('id')  # empty structure:
 
-    # create a new model for each group of 62 chains, and add to structure and change the id of the chains and record the info about which is the molecule of each chain
     chain_counter = 0
     model_counter = 0
     legend = ""
 
-    # change the ids of the chains to completely random, for further
-    chains = list(final_model.get_chains())
+    chains = list(final_model.get_chains()) # Get all the chains in the final model
 
     for chain in chains:
 
-        # define the new id:
+        # Assign a new name from the alphabet
         new_id = chain_alphabet[chain_counter]
 
-        # update what has to be printed:
+        # Create a legend so the user can map the old chain names to the new ones
         legend += 'CHAIN    %s   %s   %s\n' % (new_id, chain.id[1], info_seqs[chain.id[1]])
+      
+        chain.id = new_id   # Change the ID
+        chain_counter += 1  # One more chain
 
-        # change to the new id
-        chain.id = new_id
-
-        # improve the chain counter
-        chain_counter += 1
-
-        # if options.verbose:
-        #     print('printing chain: ', chain_counter, chain.id)
-
-        # initialize model
+        # Create new model in the first chain
         if chain_counter == 1:
             model_counter += 1
             model = pdb_model.Model(model_counter)
 
-        # add chain to the model
         model.add(chain)
 
-        # reset counter and add model after 62 rounds
+        # If the chain number exceeds the number of characters in the alphabet, reset the counter and
+        # add the structure
         if chain_counter == len(chain_alphabet):
+            
             chain_counter = 0
 
             model = model.copy()
             structure.add(model)
 
-            # remove the chains in the current model of  of the final_model, to avoid further problems with the id
+            # As IDs can't be duplicated in a model, delete the chain that have already been processed
             for chain_m in model.get_chains():
                 final_model[0].detach_child(chain_m.id)
 
-    # add the last model:
+    # Repeat for the final chain
     current_models_strcuture = [x.id for x in structure.get_models()]
     if model.id not in current_models_strcuture:
         structure.add(model)
 
-    # define the name of the model, not to overwrite previous existing files
+    # Model name: model_n.pdb where n is increased for each model
     written_id = 0
     PDB_name = 'model_' + str(written_id) + '.pdb'
-    while PDB_name in  os.listdir(args.output_directory) :
+    while PDB_name in os.listdir(args.output_directory) :
         written_id += 1
         PDB_name = 'model_'+str(written_id)+'.pdb'
 
-    # if options.verbose:
-    #     print('%s created as a model for the complex structure.' % PDB_name)
+    logging.info(f'Model {PDB_name} stored at {args.output}')
 
-    # open the pdb and put information about what is each chain
+    # Specify the output path and append it to a list of paths
     model_path = args.output_directory + "/structures/" + PDB_name
-    model_paths.append(model_path) ### OJO
+    model_paths.append(model_path)
 
-    # Write the ATOM lines:
-    io = PDBIO()  # using our own PDB writer
+    # Save the coordinates
+    io = PDBIO()
     io.set_structure(structure)
     io.save(model_path)
 
-    # write the info lines
-    fd = open(model_path, 'a')
-    fd.write('CHAIN HEADER    current id   molecule id    sequence\n')
-    fd.write(legend)
-    fd.write('\n')
-    fd.close()
+    # Save the legend
+    fh = open(model_path, 'a')
+    fh.write('CHAIN HEADER    current id   molecule id    sequence\n')
+    fh.write(legend)
+    fh.write('\n')
+    fh.close()
 
+# Remove the temporary directory if exists
 import shutil
 shutil.rmtree("PDIB_tmp")
 
+# Run relaxation protocol with PyRosetta
 if args.refine:
     try:
         from refine import *
@@ -242,12 +238,14 @@ if args.refine:
         logging.warning("Module PyRossetta not installed. No refined models will be generated.")
     
     else:
+        
         os.makedirs("./%s/refined" % args.output_directory, exist_ok = True)
+        
         for path in model_paths:
-
             refine(path, args.output_directory, logging)
             model_paths.append(path)
 
+# Compute z-scores with ProSa2003
 if args.energies:
     compute_energy(model_paths, args.output_directory, logging)
 
