@@ -176,7 +176,7 @@ def check_structure_exists(structure, all_structures):
                                         partner_found = True
 
                         # If all chains have a partner returns True
-                        if len(partners) == len(list(created_structure.get_chains())):
+                        if len(partners) == len(list(each_structure.get_chains())):
                             return True  
 
     # If not all chains match returns False
