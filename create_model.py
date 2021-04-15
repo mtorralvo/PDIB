@@ -180,19 +180,21 @@ def create_model(current_structure, stored_structures, info_files, num_chains, n
         if stoich:
             final_stoich = {}
             for chain in current_structure.get_chains():
-                chain_id = chain.id[1]
+                chain_id = chain.id[0]
 
                 if chain_id not in final_stoich:
                     final_stoich[chain_id] = 1
                 else:
                     final_stoich[chain_id] += 1
 
+                    
+
             divisors = set()
             for key, value in final_stoich.items():
                 divisor = value / stoich[key]
                 divisors.add(divisor)
 
-            if len(divisors) == 1 and check_structure_exists(current_structure, stored_structures) is False:
+            if len(final_stoich) == len(stoich) and len(divisors) == 1 and check_structure_exists(current_structure, stored_structures) is False:
                 stored_structures.append(current_structure)
 
                 # if verbose:
