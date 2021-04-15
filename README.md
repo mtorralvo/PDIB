@@ -1,7 +1,7 @@
 # Protein-DNA Interaction Builder (PDIB) 
 *María Torralvo, Ángel Monsalve and Mireia Codina*
 
-PDIB is a Python application that builds biological macrocomplexes from PDB files containing pairwise interactions between polypeptides chains or between protein and nucleotide sequences (DNA or RNA). It has been developed as the final project for both Introduction to Python and Structural Bioinformatics subjects of the MSc in Bioinformatics for Health Sciences at UPF (Universitat Pompeu Fabra).
+**PDIB** is a Python application that builds biological macrocomplexes from PDB files containing pairwise interactions between polypeptides chains or between protein and nucleotide sequences (DNA or RNA). It has been developed as the final project for both Introduction to Python and Structural Bioinformatics subjects of the MSc in Bioinformatics for Health Sciences at UPF (Universitat Pompeu Fabra).
 
 ## Software requirements
 Python version:
