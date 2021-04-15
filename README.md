@@ -95,7 +95,7 @@ Optionally, the user may provide an stoichiometry file, indicating the number of
 Chain1: 1
 Chain2: 1
 ```
-Where the number at the right indicates the number of appearances of that chain. The colons (":") can be replaced with an equal sign ("=") if the user pleases. The names appearing in the stoichiometry file must match those indicated in the .pdb filenames.
+Where the number at the right indicates the number of appearances of that chain. The colons (":") can be replaced with an equal sign ("=") if the user pleases. The chain id in the stoichiometry should be concordant with those in the pairwise interaction pdb files.
 
 ## Generating several models
 
@@ -109,7 +109,24 @@ Finally, PDIB allows to generate all the possible models with the option -exh. T
 
 We have developed a GUI to run PDIB without having to use the command line. It has different button blocks to select inputs that are mandatory for the program to run properly and another one to select the optional ones. 
 
+<div class="row">
+    <div class="col-md-12">
+      <div class="thumbnail">
+        <img src="/images/GUI_default.png" alt="GUI" style="width:500px;height:400px">
+      </div>
+    </div>
+  </div>
+
+
 In the required inputs frame, the input and the output folders can be browsed from the computer. Here, it is important that the output folder already contains inside two directories named as follows: structures and analysis. Moreover, it has a list box where the PDB files found in the input directory are displayed. The next image shows how the files from the 1gzx folder are represented in the GUI. 
+
+<div class="row">
+    <div class="col-md-12">
+      <div class="thumbnail">
+        <img src="/images/GUI_options.png" alt="GUI" style="width:500px;height:400px">
+      </div>
+    </div>
+  </div>
 
 Then, the user can choose to either specify the number of models that wants PDIB to generate or select the option of generating all possible models. 
 
