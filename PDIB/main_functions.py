@@ -375,8 +375,13 @@ def create_model(current_structure, stored_structures, info_files, num_chains, n
 
             divisors = set()
             for key, value in final_stoich.items():
-                divisor = value / stoich[key]
-                divisors.add(divisor)
+                try:
+                    divisor = value / stoich[key]
+                    divisors.add(divisor)
+                
+                except KeyError:
+                    logging.error('Stoichiometry file not valid, could not found chain %s' % key)
+                    quit()
 
             if len(final_stoich) == len(stoich) and len(divisors) == 1 and check_structure_exists(current_structure, stored_structures) is False:
                 stored_structures.append(current_structure)
