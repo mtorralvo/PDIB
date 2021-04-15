@@ -185,7 +185,7 @@ for final_model in final_models:
         new_id = chain_alphabet[chain_counter]
 
         # Create a legend so the user can map the old chain names to the new ones
-        legend += 'CHAIN    %s   %s   %s\n' % (new_id, chain.id[1], info_seqs[chain.id[1]])
+        legend += 'CHAIN    %s   %s   %s\n' % (new_id, chain.id[1], info_seqs[chain.id[0]])
       
         chain.id = new_id   # Change the ID
         chain_counter += 1  # One more chain
