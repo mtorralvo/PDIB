@@ -111,7 +111,7 @@ Finally, PDIB allows to generate all the possible models with the option -exh. T
 We have developed a GUI to run PDIB without having to use the command line. It has different button blocks to select inputs that are mandatory for the program to run properly and another one to select the optional ones. In order to run the GUI it is needed to write the following in the command line and the gui.py file has to be in the same directory where the other scripts of the program are stored:
 
 ```
-python PDIB/gui.py & 
+python3 PDIB/gui.py & 
 ```
 
 <div class="row">
