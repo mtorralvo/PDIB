@@ -62,6 +62,7 @@ parser.add_argument('-n_models', '--number-of-models',
    default=1,
    help='Number of models to be generated')
 
+# Default 60 because 62 is the maximum number of chains that can be stored in a single pdb file (non multicharacter chain ids)
 parser.add_argument('-n_chains', '--number-of-chains',
    dest='num_chains',
    type=int,
@@ -93,7 +94,7 @@ if args.verbose:
         datefmt='%m/%d/%Y %H:%M:%S')
 
 if not args.stoich or args.num_chains:
-    warning = input('No stoichiometry file nor number of chains specified. The program will keep running until 1000 chains are added. Do you want to continue (y/n): ')
+    warning = input('No stoichiometry file nor number of chains specified. The program will keep running until 60 chains are added. Do you want to continue (y/n): ')
     
     if warning in ['y', 'Y', 'yes', 'Yes']:
         pass
