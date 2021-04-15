@@ -65,7 +65,7 @@ Gives information during the execution of the script
 
 An example is provided with the program and can be run by using the following command:
 ```
-pdib -i example -o . -f -v > log.txt
+pdib.py -i examples/1gzx/ -o . -f -v > log.txt
 ```
 This will create two folders inside the current directory: "Structures" and "Analysis". The first one contains all the structures that PDIB could find meeting the requirements of the user. The latter contains (if the option is selected) a file with the Z-Score of the generated models, so the user can choose the one with the best score.
 
