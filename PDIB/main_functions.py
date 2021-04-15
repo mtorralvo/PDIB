@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# coding=utf-8
-
 """Main functions used to create the models. Includes functions to superimpose chains, check clashes and the main recursive algorithm."""
 
 from Bio.PDB.Superimposer import Superimposer
