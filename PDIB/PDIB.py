@@ -149,7 +149,7 @@ for chain in first_structure.get_chains():
 
 final_models = []
 
-final_models = create_model(first_structure, final_models, info_files, args.num_chains, args.num_models, args.exhaustive, stoich=stoichiometry, verbose=False)
+final_models = create_model(first_structure, final_models, info_files, args.num_chains, args.num_models, args.all_models, stoich=stoichiometry, verbose=False)
 
 
 if len(final_models) == 0:
