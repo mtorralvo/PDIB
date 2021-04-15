@@ -43,11 +43,11 @@ parser.add_argument('-v', '--verbose',
     default = False,
     help = 'Gives information during the execution of the script')
 
-parser.add_argument('-exh', '--exhaustive',
-    dest='exhaustive',
+parser.add_argument('-all', '--all_models',
+    dest='all_models',
     action='store_true',
     default=False,
-    help='Try all the possibilities. It may take a long time!')
+    help='Try all the models. It might take a long time! It is not recommended (specially when the complex is large) unless you suspect that more than one model is possible')
 
 parser.add_argument('-sto', '--stoichiometry',
    dest='stoich',
@@ -149,7 +149,7 @@ for chain in first_structure.get_chains():
 
 final_models = []
 
-final_models = create_model(first_structure, final_models, info_files, args.num_chains, args.num_models, args.exhaustive, stoich=stoichiometry, verbose=False)
+final_models = create_model(first_structure, final_models, info_files, args.num_chains, args.num_models, args.all_models, stoich=stoichiometry, verbose=False)
 
 
 if len(final_models) == 0:
