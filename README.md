@@ -23,7 +23,7 @@ For computing the Z-Scores:
 This file provides a usage guideline to run PDIB. The program can be installed from the parent directory using the following command:
 
 ```
-python setup.py install
+python3 setup.py install
 ```
 
 ## Command line arguments
